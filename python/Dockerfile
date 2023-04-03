@@ -1,8 +1,8 @@
-FROM python:3.11.2-bullseye
+FROM python:alpine
 
 RUN mkdir /venv
 
-RUN apt-get update && apt-get install -y python3-dev libffi-dev gcc musl-dev libssl-dev
+RUN apk update && apk add python3-dev libffi-dev gcc musl-dev openssl-dev
 
 RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
