@@ -1,19 +1,21 @@
-FROM golang:1.20.2 AS builder 
+FROM golang AS builder
 
 WORKDIR /app
 
-COPY go.mod go.sum /app/
+COPY go.mod go.sum ./
 
-RUN go mod tidy && go mod download
+RUN go mod download
 
 COPY . .
 
-RUN CGO_ENABLED=0 go build -o build/fizzbuzz
+RUN go build -o build/fizzbuzz
 
-FROM scratch
+FROM gcr.io/distroless/base
 
-COPY --from=builder /app/build/fizzbuzz /fizzbuzz
+COPY --from=builder /app/build/fizzbuzz /
 
-COPY --from=builder /app/templates /templates
+COPY --from=builder /app/templates/index.html /templates/
 
-CMD ["/fizzbuzz", "serve", "--port=8080"]
+EXPOSE 8080
+
+CMD ["/fizzbuzz", "serve"]
